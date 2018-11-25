@@ -1,0 +1,67 @@
+<% include ./partials/header %>
+
+<% /* navbar specifically for index route starts */ %>
+  <div class="ui secondary menu">
+    <div class="ui container">
+      <div class="zheader item"><i class="code"></i>Zero To Mastery</div>
+
+        <a href="/links" class="item">Home</a>
+        <div class="right menu">
+          <div class="dropdown">
+            <button class="dropbtn">Languages</button>
+            <div class="dropdown-content navHead">
+              <a href="/links/">All</a>
+              <a href="/links/filter/?category=javascript">Javascript</a>
+              <a href="/links/filter/?category=java">Java</a>
+              <a href="/links/filter/?category=python">Python</a>
+              <a href="/links/filter/?category=ruby">Ruby</a>
+              <a href="/links/filter/?category=csharp">c#</a>
+              <a href="/links/filter/?category=random">Random</a>
+            </div>
+          </div>
+          <a href="/logout" class="ui item">
+            logout
+          </a>
+        </div>
+      
+    </div>
+  </div>
+<% /* navbar ends */ %>
+
+
+<div class="middle">
+<div class="ui main text container">
+  <div class="ui huge header">Zero-To-Mastery AOC-2018</div>
+  <div class="ui top attached segment">
+    <div class="ui divided items">
+      <% blogs.forEach(function(el){ %>
+        <div class="item">
+          <div class="content">
+              <a class="header" href="/links/<%= el._id %>/edit"><%= el.url_text %></a>
+              <div class="descrption cf">
+                <div class="fl disp">
+                  <p>Name: -> <%- el.userName %></p>
+                  <p>dayNumber: -> <%- el.dayNumber %></p>
+                  <p>UserID: -> <%- el.userid %></p>
+                  <p>URL: -> <%- el.url.substring(0, 30) %>...</p>
+                  <p><a href=<%- el.avatarUrl %> target="_blank" rel="noopener noreferrer">Avatar: -> <%- el.avatarUrl.substring(0, 28) %>....</a></p>
+                </div><br />
+                <div class="fr">
+                  <img src="<%- el.avatarUrl %>" width="60px" height="60px" />
+                </div>
+              </div>
+              <div class="extra">
+                     <a class="ui orange basic button" href="/links/<%= el._id %>/edit">Edit</a>
+                  <form id="delete" action="/links/<%= el._id %>?_method=DELETE" method="POST">
+                    <button class="ui red basic button">Delete</button>
+                  </form>
+              </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</div>
+</div>
+
+<% include ./partials/footer %>
