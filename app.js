@@ -46,7 +46,7 @@ const secret = process.env.SECRET;
 
 //mlab
 let dbUrl = process.env.DB_URL;
-mongoose.connect('dbUrl', {useNewUrlParser: true});
+mongoose.connect(dbUrl, {useNewUrlParser: true});
 
 // for local setup
 // mongoose.connect("mongodb://127.0.0.1:27017/test", {useNewUrlParser: true});
