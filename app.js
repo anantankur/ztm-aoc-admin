@@ -66,14 +66,25 @@ app.use(require('express-session')({ secret: secret, resave: false, saveUninitia
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Snippet collection
 var linkSchema = new mongoose.Schema({
     dayNumber: String,
     userid: String,
     url: String,
     userName: String,
+    langName: String,
     avatarUrl: String
 });
 let Snippet = mongoose.model('Snippet', linkSchema);
+
+// User collection
+var userSchema = new mongoose.Schema({
+    username: String,
+	userid: String,
+	avatarUrl: String,
+	point: String
+});
+let User = mongoose.model('User', userSchema);
 
 app.listen(port, (req, res) => {
     console.log('running on port ' + port);
@@ -85,7 +96,7 @@ app.get('/', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res
   	res.redirect('/links');
 });
 
-// Index Route
+// Snippet Index Route
 app.get('/links', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
     Snippet.find({}, (err, blogs) => {
 	    if(err){
@@ -97,15 +108,32 @@ app.get('/links', require('connect-ensure-login').ensureLoggedIn('/admin'), (req
     });
 });
 
-// FILTERED Index Route
+// Snippet FILTERED Index Route
 app.get('/links/filter', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
-	console.log(req.query.category)
-    Snippet.find({category: req.query.category}, (err, blogs) => {
+	console.log(req.query.lang)
+    Snippet.find({langName: req.query.lang}, (err, blogs) => {
 	    if(err){
 	        console.log(err);
 	        res.send('opps error')
 	    } else {
 	        res.render('index', {blogs: blogs});
+	    }
+    });
+});
+
+// Error page
+app.get('/error', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+	res.render('err');
+});
+
+// User Index Route
+app.get('/users', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+    User.find({}, (err, users) => {
+	    if(err){
+	        console.log(err);
+	        res.send('opps error')
+	    } else {
+	        res.render('userIndex', {user: users});
 	    }
     });
 });
@@ -136,7 +164,7 @@ app.post('/admin', passport.authenticate('local', { failureRedirect: '/admin' })
   
 });
 
-// Edit Route
+// Edit Route(for Snippet collection)
 app.get('/links/:id/edit', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
 
 	    Snippet.findById(req.params.id, (err, foundBlog) => {
@@ -150,12 +178,12 @@ app.get('/links/:id/edit', require('connect-ensure-login').ensureLoggedIn('/admi
 });
 
 
-// Update Route
+// Update Route(for Snippet collection)
 app.put('/links/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
     req.body.blog.desc = req.sanitize(req.body.blog.desc);
     Snippet.findByIdAndUpdate(req.params.id, req.body.blog, (err, updatedBlog) => {
 	    if(err){
-	        res.redirect('/links');
+	        res.redirect('/error');
 	        console.log(err)
 	    } else {
 	        res.redirect('/links');
@@ -163,13 +191,51 @@ app.put('/links/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), 
     });
 });
 
-// Delete Route
+// Delete Route(for Snippet collection)
 app.delete('/links/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
     Snippet.findByIdAndRemove(req.params.id, (err) => {
 	    if(err){
-	        res.redirect('/links');
+	        res.redirect('/error');
 	    } else {
 	        res.redirect('/links');
+	    }
+    });
+});
+
+
+// Edit Route(for User collection)
+app.get('/users/:id/edit', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+
+    User.findById(req.params.id, (err, foundUser) => {
+	    if(err){
+	        res.redirect('/error');
+	    } else {
+		    res.render('userEdit', {users: foundUser});
+	    }
+    });
+
+});
+
+
+// Update Route(for User collection)
+app.put('/users/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+    User.findByIdAndUpdate(req.params.id, req.body.users, (err, updatedBlog) => {
+	    if(err){
+	        res.redirect('/error');
+	        console.log(err)
+	    } else {
+	        res.redirect('/users');
+	    }
+    });
+});
+
+// Delete Route(for User collection)
+app.delete('/users/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+    User.findByIdAndRemove(req.params.id, (err) => {
+	    if(err){
+	        res.redirect('/error');
+	    } else {
+	        res.redirect('/users');
 	    }
     });
 });

@@ -6,20 +6,7 @@
       <div class="zheader item"><i class="code"></i>Zero To Mastery</div>
 
         <a href="/links" class="item">Home</a>
-        <a href="/users" class="item">Users</a>
         <div class="right menu">
-          <div class="dropdown">
-            <button class="dropbtn">Languages</button>
-            <div class="dropdown-content navHead">
-              <a href="/links/">All</a>
-              <a href="/links/filter/?lang=javascript">Javascript</a>
-              <a href="/links/filter/?lang=java">Java</a>
-              <a href="/links/filter/?lang=python">Python</a>
-              <a href="/links/filter/?lang=ruby">Ruby</a>
-              <a href="/links/filter/?lang=csharp">c#</a>
-              <a href="/links/filter/?lang=random">Random</a>
-            </div>
-          </div>
           <a href="/logout" class="ui item">
             logout
           </a>
@@ -35,16 +22,15 @@
   <div class="ui huge header">Zero-To-Mastery AOC-2018</div>
   <div class="ui top attached segment">
     <div class="ui divided items">
-      <% blogs.forEach(function(el){ %>
+      <% user.forEach(function(el){ %>
         <div class="item">
           <div class="content">
               <a class="header" href="/links/<%= el._id %>/edit"><%= el.url_text %></a>
               <div class="descrption cf">
                 <div class="fl disp">
-                  <p>Name: -> <%- el.userName %></p>
-                  <p>dayNumber: -> <%- el.dayNumber %></p>
+                  <p>Name: -> <%- el.username %></p>
                   <p>UserID: -> <%- el.userid %></p>
-                  <p>URL: -> <%- el.url.substring(0, 30) %>...</p>
+                  <p>Points: -> <%- el.point %></p>
                   <p><a href=<%- el.avatarUrl %> target="_blank" rel="noopener noreferrer">Avatar: -> <%- el.avatarUrl.substring(0, 28) %>....</a></p>
                 </div><br />
                 <div class="fr">
@@ -52,8 +38,8 @@
                 </div>
               </div>
               <div class="extra">
-                     <a class="ui orange basic button" href="/links/<%= el._id %>/edit">Edit</a>
-                  <form id="delete" action="/links/<%= el._id %>?_method=DELETE" method="POST">
+                  <a class="ui orange basic button" href="/users/<%= el._id %>/edit">Edit</a>
+                  <form id="delete" action="/users/<%= el._id %>?_method=DELETE" method="POST">
                     <button class="ui red basic button" onclick="return confirm('Are you sure, you want to delete?')">Delete</button>
                   </form>
               </div>
