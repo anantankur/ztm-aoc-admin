@@ -1,6 +1,7 @@
 const email = process.env.EMAIL;
 const password = process.env.PASSWORD;
 
+// local setup
 // const email = 'a@a.a';
 // const password = 'pass';
 
