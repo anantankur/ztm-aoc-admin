@@ -80,9 +80,10 @@ let Snippet = mongoose.model('Snippet', linkSchema);
 // User collection
 var userSchema = new mongoose.Schema({
     username: String,
-	userid: String,
-	avatarUrl: String,
-	point: String
+		userid: String,
+		badgePoint: Number,
+		avatarUrl: String,
+		point: String
 });
 let User = mongoose.model('User', userSchema);
 
@@ -161,7 +162,7 @@ app.get('/logout', (req, res) => {
 app.post('/admin', passport.authenticate('local', { failureRedirect: '/admin' }), (req, res) => {
 
     res.redirect('/links');
-  
+
 });
 
 // Edit Route(for Snippet collection)
