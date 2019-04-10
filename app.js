@@ -4,6 +4,7 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	methodOverride = require('method-override'),
 	expressSanitizer = require('express-sanitizer'),
+	connectEnsureLogin = require('connect-ensure-login');
 	passport = require('passport'),
 	Strategy = require('passport-local').Strategy,
 	db = require('./db');
@@ -61,8 +62,7 @@ app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
 app.use(require('express-session')({ secret: secret, resave: false, saveUninitialized: false }));
 
-// Initialize Passport and restore authentication state, if any, from the
-// session.
+// Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -91,14 +91,14 @@ app.listen(port, (req, res) => {
     console.log('running on port ' + port);
 });
 
-// RESTful Routes
-app.get('/', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+// Routes
+app.get('/', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
   	console.log('logged in');
   	res.redirect('/links');
 });
 
-// Snippet Index Route
-app.get('/links', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+// Index Route
+app.get('/links', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
     Snippet.find({}, (err, blogs) => {
 	    if(err){
 	        console.log(err);
@@ -109,8 +109,8 @@ app.get('/links', require('connect-ensure-login').ensureLoggedIn('/admin'), (req
     });
 });
 
-// Snippet FILTERED Index Route
-app.get('/links/filter', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+// FILTERED Index Route
+app.get('/links/filter', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
 	console.log(req.query.lang)
     Snippet.find({langName: req.query.lang}, (err, blogs) => {
 	    if(err){
@@ -122,13 +122,13 @@ app.get('/links/filter', require('connect-ensure-login').ensureLoggedIn('/admin'
     });
 });
 
-// Error page
-app.get('/error', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+// Error Route
+app.get('/error', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
 	res.render('err');
 });
 
 // User Index Route
-app.get('/users', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+app.get('/users', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
     User.find({}, (err, users) => {
 	    if(err){
 	        console.log(err);
@@ -139,7 +139,7 @@ app.get('/users', require('connect-ensure-login').ensureLoggedIn('/admin'), (req
     });
 });
 
-app.get('/links/new', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+app.get('/links/new', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
 
 	res.render('new');
 
@@ -166,7 +166,7 @@ app.post('/admin', passport.authenticate('local', { failureRedirect: '/admin' })
 });
 
 // Edit Route(for Snippet collection)
-app.get('/links/:id/edit', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+app.get('/links/:id/edit', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
 
 	    Snippet.findById(req.params.id, (err, foundBlog) => {
 		    if(err){
@@ -180,7 +180,7 @@ app.get('/links/:id/edit', require('connect-ensure-login').ensureLoggedIn('/admi
 
 
 // Update Route(for Snippet collection)
-app.put('/links/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+app.put('/links/:id', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
     req.body.blog.desc = req.sanitize(req.body.blog.desc);
     Snippet.findByIdAndUpdate(req.params.id, req.body.blog, (err, updatedBlog) => {
 	    if(err){
@@ -193,7 +193,7 @@ app.put('/links/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), 
 });
 
 // Delete Route(for Snippet collection)
-app.delete('/links/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+app.delete('/links/:id', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
     Snippet.findByIdAndRemove(req.params.id, (err) => {
 	    if(err){
 	        res.redirect('/error');
@@ -205,7 +205,7 @@ app.delete('/links/:id', require('connect-ensure-login').ensureLoggedIn('/admin'
 
 
 // Edit Route(for User collection)
-app.get('/users/:id/edit', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+app.get('/users/:id/edit', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
 
     User.findById(req.params.id, (err, foundUser) => {
 	    if(err){
@@ -219,7 +219,7 @@ app.get('/users/:id/edit', require('connect-ensure-login').ensureLoggedIn('/admi
 
 
 // Update Route(for User collection)
-app.put('/users/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+app.put('/users/:id', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
     User.findByIdAndUpdate(req.params.id, req.body.users, (err, updatedBlog) => {
 	    if(err){
 	        res.redirect('/error');
@@ -231,7 +231,7 @@ app.put('/users/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), 
 });
 
 // Delete Route(for User collection)
-app.delete('/users/:id', require('connect-ensure-login').ensureLoggedIn('/admin'), (req, res) => {
+app.delete('/users/:id', connectEnsureLogin.ensureLoggedIn('/admin'), (req, res) => {
     User.findByIdAndRemove(req.params.id, (err) => {
 	    if(err){
 	        res.redirect('/error');
